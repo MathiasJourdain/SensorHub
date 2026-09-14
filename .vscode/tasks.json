@@ -1,0 +1,163 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Validate Sensor Freezed fix",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate Flutter routes and models",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\dart.bat",
+			"args": [
+				"run",
+				"build_runner",
+				"build",
+				"--delete-conflicting-outputs"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Build sensor detail navigation",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Regenerate AutoRoute files",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\dart.bat",
+			"args": [
+				"run",
+				"build_runner",
+				"build",
+				"--delete-conflicting-outputs"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify AutoRoute build",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Final verify sensor detail route",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Build styled SensorHub app",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify offline status styling",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify alert warning style",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Final verify alert warning style",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify hover interactions",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify visible click effect",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Final verify visible click effect",
+			"type": "shell",
+			"command": "C:\\Flutter\\flutter\\bin\\flutter.bat",
+			"args": [
+				"build",
+				"apk",
+				"--debug"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
