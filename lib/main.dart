@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 
 import 'app_router.dart';
-import 'sensor.dart';
+import 'dashboard_view_model.dart';
 import 'sensor_card.dart';
 
 void main() {
@@ -42,40 +42,13 @@ class MyApp extends StatelessWidget {
 }
 
 @RoutePage()
-class SensorListScreen extends StatefulWidget {
-  const SensorListScreen({super.key});
+class SensorListScreen extends StatelessWidget {
+  final DashboardViewModel viewModel;
 
-  @override
-  State<SensorListScreen> createState() => _SensorListScreenState();
-}
-
-class _SensorListScreenState extends State<SensorListScreen> {
-  final List<Sensor> sensors = [
-    const Sensor(
-      id: '1',
-      name: 'Salon',
-      temperature: 21.8,
-      humidity: 45,
-      battery: 82,
-      status: 'En ligne',
-    ),
-    const Sensor(
-      id: '2',
-      name: 'Garage',
-      temperature: 29.6,
-      humidity: 61,
-      battery: 64,
-      status: 'Alerte',
-    ),
-    const Sensor(
-      id: '3',
-      name: 'Jardin',
-      temperature: 14.2,
-      humidity: 80,
-      battery: 12,
-      status: 'Hors ligne',
-    ),
-  ];
+  const SensorListScreen({
+    super.key,
+    this.viewModel = const DashboardViewModel(),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -119,17 +92,17 @@ class _SensorListScreenState extends State<SensorListScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              '${sensors.length} appareils connectés à votre espace',
+              '${viewModel.sensorCount} appareils connectés à votre espace',
               style: TextStyle(color: Colors.blueGrey, fontSize: 14),
             ),
             const SizedBox(height: 24),
             Expanded(
               // 2. Afficher ces capteurs dans une liste
               child: ListView.builder(
-                itemCount: sensors.length,
+                itemCount: viewModel.sensors.length,
                 itemBuilder: (context, index) {
                   // 3. Extraire et utiliser le widget SensorCard
-                  final sensor = sensors[index];
+                  final sensor = viewModel.sensors[index];
                   return SensorCard(
                     sensor: sensor,
                     onTap: () =>
