@@ -5,26 +5,50 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tp_capteurs/main.dart';
+import 'package:tp_capteurs/dashboard_view_model.dart';
+import 'package:tp_capteurs/sensor_repository.dart';
+import 'package:tp_capteurs/sensor.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test(
+    'loads sensors through the repository and notifies each transition',
+    () async {
+      final viewModel = DashboardViewModel(
+        repository: const FakeSensorRepository(
+          delay: Duration(milliseconds: 1),
+        ),
+      );
+      final states = <AsyncState<List<Sensor>>>[];
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      viewModel.addListener(() => states.add(viewModel.state));
+      final loading = viewModel.load();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      expect(viewModel.state, isA<Loading<List<Sensor>>>());
+      await loading;
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(viewModel.state, isA<Content<List<Sensor>>>());
+      expect(viewModel.sensors, hasLength(3));
+      expect(states, hasLength(2));
+
+      viewModel.dispose();
+    },
+  );
+
+  test('publishes a failure when the repository throws', () async {
+    final viewModel = DashboardViewModel(
+      repository: const FakeSensorRepository(error: 'Erreur réseau'),
+    );
+
+    await viewModel.load();
+
+    expect(viewModel.state, isA<Failure<List<Sensor>>>());
+    expect(
+      (viewModel.state as Failure<List<dynamic>>).message,
+      contains('Erreur réseau'),
+    );
+
+    viewModel.dispose();
   });
 }

@@ -1,42 +1,58 @@
+import 'package:flutter/foundation.dart';
+
 import 'sensor.dart';
+import 'sensor_repository.dart';
 
-class DashboardViewModel {
-  const DashboardViewModel();
+sealed class AsyncState<T> {
+  const AsyncState();
+}
 
-  static const List<Sensor> _sensors = [
-    Sensor(
-      id: '1',
-      name: 'Salon',
-      temperature: 21.8,
-      humidity: 45,
-      battery: 82,
-      status: 'En ligne',
-    ),
-    Sensor(
-      id: '2',
-      name: 'Garage',
-      temperature: 29.6,
-      humidity: 61,
-      battery: 64,
-      status: 'Alerte',
-    ),
-    Sensor(
-      id: '3',
-      name: 'Jardin',
-      temperature: 14.2,
-      humidity: 80,
-      battery: 12,
-      status: 'Hors ligne',
-    ),
-  ];
+final class Loading<T> extends AsyncState<T> {
+  const Loading();
+}
 
-  List<Sensor> get sensors => _sensors;
+final class Content<T> extends AsyncState<T> {
+  final T value;
+  const Content(this.value);
+}
 
-  int get sensorCount => _sensors.length;
+final class Failure<T> extends AsyncState<T> {
+  final String message;
+  const Failure(this.message);
+}
 
+class DashboardViewModel extends ChangeNotifier {
+  final SensorRepository _repository;
+  AsyncState<List<Sensor>> _state = const Loading();
+  DashboardViewModel({SensorRepository? repository})
+    : _repository =
+          repository ??
+          (simulateRepositoryError
+              ? const FakeSensorRepository(error: 'Erreur réseau')
+              : const FakeSensorRepository());
+  AsyncState<List<Sensor>> get state => _state;
+  List<Sensor> get sensors => switch (_state) {
+    Content(value: final value) => value,
+    _ => const <Sensor>[],
+  };
+
+  int get sensorCount => sensors.length;
   int get onlineCount =>
-      _sensors.where((sensor) => sensor.status != 'Hors ligne').length;
-
+      sensors.where((sensor) => sensor.status != 'Hors ligne').length;
   bool get hasOfflineSensors =>
-      _sensors.any((sensor) => sensor.status == 'Hors ligne');
+      sensors.any((sensor) => sensor.status == 'Hors ligne');
+  Future<void> load() async {
+    _setState(const Loading());
+    try {
+      final sensors = await _repository.fetchAll();
+      _setState(Content(List.unmodifiable(sensors)));
+    } catch (error) {
+      _setState(Failure(error.toString()));
+    }
+  }
+
+  void _setState(AsyncState<List<Sensor>> value) {
+    _state = value;
+    notifyListeners();
+  }
 }

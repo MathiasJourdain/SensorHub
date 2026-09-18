@@ -14,10 +14,10 @@ class SensorDetailPage extends StatelessWidget {
     final isOffline = sensor.status == 'Hors ligne';
     final isAlert = sensor.status == 'Alerte';
     final statusColor = isOffline
-        ? const Color(0xFFC62828)
+        ? const Color(0xFFB94A4A)
         : isAlert
-        ? const Color(0xFFE07A5F)
-        : const Color(0xFF087E8B);
+        ? const Color(0xFFC57B32)
+        : const Color(0xFF2B8A70);
 
     return Scaffold(
       appBar: AppBar(
@@ -25,16 +25,16 @@ class SensorDetailPage extends StatelessWidget {
           tooltip: 'Retour',
           icon: const Icon(Icons.arrow_back),
           mouseCursor: SystemMouseCursors.click,
-          hoverColor: const Color(0x1A087E8B),
-          splashColor: const Color(0x40087E8B),
-          highlightColor: const Color(0x30087E8B),
+          hoverColor: const Color(0x1A2B8A70),
+          splashColor: const Color(0x402B8A70),
+          highlightColor: const Color(0x302B8A70),
           splashRadius: 25,
           onPressed: () => context.router.pop(),
         ),
         title: const Text(
-          "DÉTAIL D'UN CAPTEUR",
-          style: const TextStyle(
-            color: Color(0xFF172A3A),
+          'FICHE CAPTEUR',
+          style: TextStyle(
+            color: Color(0xFF20313D),
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -44,17 +44,11 @@ class SensorDetailPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(28, 8, 28, 24),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
+          padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.88),
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x18000000),
-                blurRadius: 20,
-                offset: Offset(0, 8),
-              ),
-            ],
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Color(0xFFE0E9E4)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,12 +56,22 @@ class SensorDetailPage extends StatelessWidget {
               Text(
                 sensor.name,
                 style: const TextStyle(
-                  fontSize: 26,
-                  color: Color(0xFF172A3A),
+                  fontSize: 28,
+                  color: Color(0xFF18332F),
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 12),
+              Text(
+                'DONNÉES DU JOUR',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Icon(
@@ -90,7 +94,7 @@ class SensorDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               _DetailRow(
                 'Température',
                 '${sensor.temperature.toString().replaceAll('.', ',')}°C',
@@ -101,7 +105,7 @@ class SensorDetailPage extends StatelessWidget {
               _DetailRow(
                 'État',
                 isOffline ? 'Hors ligne' : 'OK',
-                valueColor: isOffline ? const Color(0xFFC62828) : null,
+                valueColor: isOffline ? const Color(0xFFB94A4A) : null,
               ),
               const Spacer(),
               Text(
@@ -138,7 +142,7 @@ class _DetailRow extends StatelessWidget {
             value,
             style: const TextStyle(
               fontSize: 18,
-              color: Color(0xFF172A3A),
+              color: Color(0xFF18332F),
               fontWeight: FontWeight.w700,
             ).copyWith(color: valueColor),
           ),
