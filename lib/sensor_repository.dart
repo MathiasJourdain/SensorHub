@@ -5,6 +5,8 @@ const bool simulateRepositoryError = bool.fromEnvironment(
   defaultValue: false,
 );
 
+const Duration simulatedRepositoryDelay = Duration(seconds: 3);
+
 abstract interface class SensorRepository {
   Future<List<Sensor>> fetchAll();
 }
@@ -13,8 +15,12 @@ class FakeSensorRepository implements SensorRepository {
   final List<Sensor> data;
   final Duration delay;
   final Object? error;
+  final int failuresBeforeSuccess;
+  int _loadCount = 0;
 
-  const FakeSensorRepository({
+  int get loadCount => _loadCount;
+
+  FakeSensorRepository({
     this.data = const [
       Sensor(
         id: '1',
@@ -43,12 +49,15 @@ class FakeSensorRepository implements SensorRepository {
     ],
     this.delay = Duration.zero,
     this.error,
-  });
+    this.failuresBeforeSuccess = 0,
+  }) : assert(failuresBeforeSuccess >= 0);
 
   @override
   Future<List<Sensor>> fetchAll() async {
+    _loadCount++;
     await Future<void>.delayed(delay);
-    if (error != null) {
+    if (error != null &&
+        (failuresBeforeSuccess == 0 || _loadCount <= failuresBeforeSuccess)) {
       throw error!;
     }
     return List.unmodifiable(data);

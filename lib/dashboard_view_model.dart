@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'sensor.dart';
@@ -23,14 +25,31 @@ final class Failure<T> extends AsyncState<T> {
 
 class DashboardViewModel extends ChangeNotifier {
   final SensorRepository _repository;
+  final Duration staleAfter;
   AsyncState<List<Sensor>> _state = const Loading();
-  DashboardViewModel({SensorRepository? repository})
+  bool _loadInProgress = false;
+  DateTime? _lastSuccessfulRefresh;
+  Timer? _staleTimer;
+
+  DashboardViewModel({
+    SensorRepository? repository,
+    this.staleAfter = const Duration(seconds: 30),
+  })
     : _repository =
           repository ??
-          (simulateRepositoryError
-              ? const FakeSensorRepository(error: 'Erreur réseau')
-              : const FakeSensorRepository());
+          FakeSensorRepository(
+            delay: simulatedRepositoryDelay,
+            error: simulateRepositoryError ? 'Erreur réseau' : null,
+            failuresBeforeSuccess: simulateRepositoryError ? 1 : 0,
+          );
+
   AsyncState<List<Sensor>> get state => _state;
+  bool get isLoading => _loadInProgress;
+  DateTime? get lastSuccessfulRefresh => _lastSuccessfulRefresh;
+  bool get hasStaleData =>
+      _lastSuccessfulRefresh != null &&
+      DateTime.now().difference(_lastSuccessfulRefresh!) >= staleAfter;
+
   List<Sensor> get sensors => switch (_state) {
     Content(value: final value) => value,
     _ => const <Sensor>[],
@@ -41,12 +60,27 @@ class DashboardViewModel extends ChangeNotifier {
       sensors.where((sensor) => sensor.status != 'Hors ligne').length;
   bool get hasOfflineSensors =>
       sensors.any((sensor) => sensor.status == 'Hors ligne');
+
   Future<void> load() async {
+    if (_loadInProgress) {
+      return;
+    }
+
+    _loadInProgress = true;
     _setState(const Loading());
     try {
       final sensors = await _repository.fetchAll();
+      _lastSuccessfulRefresh = DateTime.now();
+      _staleTimer?.cancel();
+      _staleTimer = Timer(staleAfter, () {
+        if (!_loadInProgress && hasStaleData) {
+          notifyListeners();
+        }
+      });
+      _loadInProgress = false;
       _setState(Content(List.unmodifiable(sensors)));
     } catch (error) {
+      _loadInProgress = false;
       _setState(Failure(error.toString()));
     }
   }
@@ -54,5 +88,11 @@ class DashboardViewModel extends ChangeNotifier {
   void _setState(AsyncState<List<Sensor>> value) {
     _state = value;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _staleTimer?.cancel();
+    super.dispose();
   }
 }

@@ -1,24 +1,28 @@
-# tp_capteurs
+# SensorHub
 
-A new Flutter project.
+## Lancer l’application
 
-## Getting Started
+```powershell
+flutter.bat run --dart-define=SIMULATE_ERROR=false
+```
 
-This project is a starting point for a Flutter application.
+Le chargement simulé dure trois secondes. Pour afficher une erreur au premier
+chargement et réussir après avoir appuyé sur « Réessayer », lancez :
 
-A few resources to get you started if this is your first Flutter project:
+```powershell
+flutter.bat run --dart-define=SIMULATE_ERROR=true
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Les actualisations sont sérialisées dans le ViewModel : les demandes faites
+pendant un chargement en cours sont ignorées. Le FakeRepository expose son
+compteur `loadCount` pour vérifier le nombre d’appels effectués.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Le tableau de bord affiche l’heure de la dernière actualisation réussie et
+signale les données comme anciennes après 30 secondes. Une erreur ne remplace
+pas l’heure du dernier succès.
 
+## Tests
 
-
-
-tester sans l'erreur : flutter.bat run --dart-define=SIMULATE_ERROR=false
-
-tester avec l'erreur : flutter.bat run --dart-define=SIMULATE_ERROR=true
+```powershell
+flutter.bat test
+```

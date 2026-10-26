@@ -124,8 +124,18 @@ class _SensorListScreenState extends State<SensorListScreen> {
                           const SizedBox(width: 4),
                           IconButton(
                             tooltip: 'Actualiser',
-                            onPressed: viewModel.load,
-                            icon: const Icon(Icons.refresh_rounded, size: 19),
+                            onPressed: viewModel.isLoading
+                                ? null
+                                : viewModel.load,
+                            icon: viewModel.isLoading
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.refresh_rounded, size: 19),
                             color: Color(0xFF18332F),
                             style: IconButton.styleFrom(
                               backgroundColor: Color(0xFFE4EEE9),
@@ -137,6 +147,8 @@ class _SensorListScreenState extends State<SensorListScreen> {
                   ),
                   const SizedBox(height: 14),
                   _OverviewStrip(sensors: viewModel.sensors),
+                  const SizedBox(height: 8),
+                  _LastRefreshLabel(viewModel: viewModel),
                   const SizedBox(height: 18),
                   Expanded(child: _buildState(context)),
                 ],
@@ -180,6 +192,55 @@ class _SensorListScreenState extends State<SensorListScreen> {
       },
     ),
   };
+}
+
+class _LastRefreshLabel extends StatelessWidget {
+  final DashboardViewModel viewModel;
+
+  const _LastRefreshLabel({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    final lastRefresh = viewModel.lastSuccessfulRefresh;
+    final text = lastRefresh == null
+        ? 'Aucune actualisation réussie'
+        : 'Dernière actualisation réussie : '
+              '${_formatTime(lastRefresh)}';
+    final isStale = viewModel.hasStaleData;
+
+    return Row(
+      children: [
+        Icon(
+          isStale ? Icons.warning_amber_rounded : Icons.schedule_rounded,
+          size: 14,
+          color: isStale
+              ? const Color(0xFFC57B32)
+              : const Color(0xFF6D817C),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            isStale ? 'Données anciennes — $text' : text,
+            style: TextStyle(
+              fontSize: 11,
+              color: isStale
+                  ? const Color(0xFFC57B32)
+                  : const Color(0xFF6D817C),
+              fontWeight: isStale ? FontWeight.w700 : FontWeight.normal,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    String twoDigits(int value) => value.toString().padLeft(2, '0');
+
+    return '${twoDigits(dateTime.hour)}:'
+        '${twoDigits(dateTime.minute)}:'
+        '${twoDigits(dateTime.second)}';
+  }
 }
 
 class _OverviewStrip extends StatelessWidget {
