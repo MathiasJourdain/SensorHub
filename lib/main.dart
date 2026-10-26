@@ -10,7 +10,7 @@ void main() {
   final viewModel = DashboardViewModel(
     FakeSensorRepository(
       delay: simulatedRepositoryDelay,
-      error: 'Erreur réseau simulée',
+      error: 'Erreur réseau',
       failuresBeforeSuccess: 1,
     ),
   );
