@@ -6,8 +6,9 @@
 flutter.bat run
 ```
 
-Le chargement simulé dure trois secondes. Les erreurs restent vérifiables dans
-les tests en injectant un `FakeSensorRepository` configuré pour échouer.
+Le premier chargement simulé dure trois secondes puis affiche une erreur.
+Appuyez sur « Réessayer » pour relancer le chargement et afficher les capteurs.
+Les tentatives suivantes réussissent. Aucun `--dart-define` n’est nécessaire.
 
 Les actualisations sont sérialisées dans le ViewModel : les demandes faites
 pendant un chargement en cours sont ignorées. Le FakeRepository expose son

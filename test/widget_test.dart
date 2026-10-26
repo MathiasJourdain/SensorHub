@@ -8,10 +8,34 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tp_capteurs/dashboard_view_model.dart';
+import 'package:tp_capteurs/main.dart';
 import 'package:tp_capteurs/sensor_repository.dart';
 import 'package:tp_capteurs/sensor.dart';
 
 void main() {
+  testWidgets('shows startup error and loads sensors after retry', (
+    tester,
+  ) async {
+    final viewModel = DashboardViewModel(
+      FakeSensorRepository(
+        error: 'Erreur réseau simulée',
+        failuresBeforeSuccess: 1,
+      ),
+    );
+
+    await tester.pumpWidget(MyApp(viewModel: viewModel));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Erreur réseau simulée'), findsOneWidget);
+    expect(find.text('Réessayer'), findsOneWidget);
+
+    await tester.tap(find.text('Réessayer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('SALON'), findsOneWidget);
+    expect(find.text('Erreur réseau simulée'), findsNothing);
+  });
+
   test(
     'loads sensors through the repository and notifies each transition',
     () async {

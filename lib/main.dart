@@ -8,7 +8,11 @@ import 'sensor_repository.dart';
 
 void main() {
   final viewModel = DashboardViewModel(
-    FakeSensorRepository(delay: simulatedRepositoryDelay),
+    FakeSensorRepository(
+      delay: simulatedRepositoryDelay,
+      error: 'Erreur réseau simulée',
+      failuresBeforeSuccess: 1,
+    ),
   );
   runApp(MyApp(viewModel: viewModel));
 }
@@ -214,9 +218,7 @@ class _LastRefreshLabel extends StatelessWidget {
         Icon(
           isStale ? Icons.warning_amber_rounded : Icons.schedule_rounded,
           size: 14,
-          color: isStale
-              ? const Color(0xFFC57B32)
-              : const Color(0xFF6D817C),
+          color: isStale ? const Color(0xFFC57B32) : const Color(0xFF6D817C),
         ),
         const SizedBox(width: 6),
         Expanded(
