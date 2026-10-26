@@ -3,15 +3,11 @@
 ## Lancer l’application
 
 ```powershell
-flutter.bat run --dart-define=SIMULATE_ERROR=false
+flutter.bat run
 ```
 
-Le chargement simulé dure trois secondes. Pour afficher une erreur au premier
-chargement et réussir après avoir appuyé sur « Réessayer », lancez :
-
-```powershell
-flutter.bat run --dart-define=SIMULATE_ERROR=true
-```
+Le chargement simulé dure trois secondes. Les erreurs restent vérifiables dans
+les tests en injectant un `FakeSensorRepository` configuré pour échouer.
 
 Les actualisations sont sérialisées dans le ViewModel : les demandes faites
 pendant un chargement en cours sont ignorées. Le FakeRepository expose son

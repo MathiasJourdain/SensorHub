@@ -16,7 +16,7 @@ void main() {
     'loads sensors through the repository and notifies each transition',
     () async {
       final viewModel = DashboardViewModel(
-        repository: FakeSensorRepository(delay: Duration(milliseconds: 1)),
+        FakeSensorRepository(delay: Duration(milliseconds: 1)),
       );
       final states = <AsyncState<List<Sensor>>>[];
 
@@ -36,7 +36,7 @@ void main() {
 
   test('publishes a failure when the repository throws', () async {
     final viewModel = DashboardViewModel(
-      repository: FakeSensorRepository(error: 'Erreur réseau'),
+      FakeSensorRepository(error: 'Erreur réseau'),
     );
 
     await viewModel.load();
@@ -57,7 +57,7 @@ void main() {
         error: 'Erreur réseau',
         failuresBeforeSuccess: 1,
       );
-      final viewModel = DashboardViewModel(repository: repository);
+      final viewModel = DashboardViewModel(repository);
 
       await viewModel.load();
       expect(viewModel.state, isA<Failure<List<Sensor>>>());
@@ -77,7 +77,7 @@ void main() {
     final repository = FakeSensorRepository(
       delay: const Duration(milliseconds: 20),
     );
-    final viewModel = DashboardViewModel(repository: repository);
+    final viewModel = DashboardViewModel(repository);
 
     final firstLoad = viewModel.load();
     final repeatedLoads = Future.wait([
@@ -104,7 +104,7 @@ void main() {
     final repository = _SwitchableSensorRepository(
       shouldFail: () => shouldFail,
     );
-    final viewModel = DashboardViewModel(repository: repository);
+    final viewModel = DashboardViewModel(repository);
 
     await viewModel.load();
     final lastSuccess = viewModel.lastSuccessfulRefresh;
@@ -121,7 +121,7 @@ void main() {
 
   test('marks successful data stale after the configured threshold', () async {
     final viewModel = DashboardViewModel(
-      repository: FakeSensorRepository(),
+      FakeSensorRepository(),
       staleAfter: const Duration(milliseconds: 20),
     );
 

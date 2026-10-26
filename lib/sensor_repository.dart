@@ -1,10 +1,5 @@
 import 'sensor.dart';
 
-const bool simulateRepositoryError = bool.fromEnvironment(
-  'SIMULATE_ERROR',
-  defaultValue: false,
-);
-
 const Duration simulatedRepositoryDelay = Duration(seconds: 3);
 
 abstract interface class SensorRepository {

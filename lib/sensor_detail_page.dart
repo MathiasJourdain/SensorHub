@@ -1,9 +1,7 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import 'sensor.dart';
 
-@RoutePage()
 class SensorDetailPage extends StatelessWidget {
   final Sensor sensor;
 
@@ -29,7 +27,7 @@ class SensorDetailPage extends StatelessWidget {
           splashColor: const Color(0x402B8A70),
           highlightColor: const Color(0x302B8A70),
           splashRadius: 25,
-          onPressed: () => context.router.pop(),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'FICHE CAPTEUR',

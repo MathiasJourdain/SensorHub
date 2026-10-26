@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
 
-import 'app_router.dart';
 import 'dashboard_view_model.dart';
-import 'sensor_card.dart';
 import 'sensor.dart';
+import 'sensor_card.dart';
+import 'sensor_detail_page.dart';
+import 'sensor_repository.dart';
 
 void main() {
-  runApp(const MyApp());
+  final viewModel = DashboardViewModel(
+    FakeSensorRepository(delay: simulatedRepositoryDelay),
+  );
+  runApp(MyApp(viewModel: viewModel));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  final DashboardViewModel viewModel;
+
+  const MyApp({super.key, required this.viewModel});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.load();
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'SensorHub',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -37,40 +59,15 @@ class MyApp extends StatelessWidget {
           scrolledUnderElevation: 0,
         ),
       ),
-      routerConfig: appRouter.config(),
+      home: SensorListScreen(viewModel: widget.viewModel),
     );
   }
 }
 
-@RoutePage()
-class SensorListScreen extends StatefulWidget {
-  final DashboardViewModel? viewModel;
+class SensorListScreen extends StatelessWidget {
+  final DashboardViewModel viewModel;
 
-  const SensorListScreen({super.key, this.viewModel});
-
-  @override
-  State<SensorListScreen> createState() => _SensorListScreenState();
-}
-
-class _SensorListScreenState extends State<SensorListScreen> {
-  late final DashboardViewModel viewModel;
-  late final bool ownsViewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    ownsViewModel = widget.viewModel == null;
-    viewModel = widget.viewModel ?? DashboardViewModel();
-    viewModel.load();
-  }
-
-  @override
-  void dispose() {
-    if (ownsViewModel) {
-      viewModel.dispose();
-    }
-    super.dispose();
-  }
+  const SensorListScreen({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +184,11 @@ class _SensorListScreenState extends State<SensorListScreen> {
         final sensor = sensors[index];
         return SensorCard(
           sensor: sensor,
-          onTap: () => context.router.push(SensorDetailRoute(sensor: sensor)),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => SensorDetailPage(sensor: sensor),
+            ),
+          ),
         );
       },
     ),

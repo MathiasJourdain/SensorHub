@@ -31,17 +31,10 @@ class DashboardViewModel extends ChangeNotifier {
   DateTime? _lastSuccessfulRefresh;
   Timer? _staleTimer;
 
-  DashboardViewModel({
-    SensorRepository? repository,
+  DashboardViewModel(
+    SensorRepository repository, {
     this.staleAfter = const Duration(seconds: 30),
-  })
-    : _repository =
-          repository ??
-          FakeSensorRepository(
-            delay: simulatedRepositoryDelay,
-            error: simulateRepositoryError ? 'Erreur réseau' : null,
-            failuresBeforeSuccess: simulateRepositoryError ? 1 : 0,
-          );
+  }) : _repository = repository;
 
   AsyncState<List<Sensor>> get state => _state;
   bool get isLoading => _loadInProgress;
